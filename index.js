@@ -4,6 +4,9 @@ const routes = require('./routes/userRoute');
 const db = require('./config/dbconnection'); 
 const cors = require('cors');
 app.use(cors());
+app.use(cors({
+  origin: 'https://task-manager-kappa-silk-75.vercel.app'
+}));
 
 app.use(express.json());
 app.use('/api', routes);
