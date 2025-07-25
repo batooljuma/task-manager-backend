@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/dbconnection');
 //by batool
+app.get('/', (req, res) => {
+  res.send('Backend is running!');
+});
+
 router.post('/signup', (req, res) => {
     const { username, password, isStudent, universityId } = req.body;
 
