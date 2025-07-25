@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/dbconnection');
 //by batool
+
 router.get('/', (req, res) => {
   res.send('Backend is running!');
 });

@@ -8,6 +8,11 @@ app.use(cors({
   origin: 'https://task-manager-kappa-silk-75.vercel.app'
 }));
 
+
+app.get('/', (req, res) => {
+  res.send('Backend is running!');
+});
+
 app.use(express.json());
 app.use('/api', routes);
 
