@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/dbconnection');
-//by batool
 
 router.get('/', (req, res) => {
   res.send('Backend is running!');
@@ -50,7 +49,6 @@ router.post('/signup', (req, res) => {
         res.status(201).json({ message: "Sign up successful!" });
     });
 });
-//by batool
 
 router.post('/signin', (req, res) => {
     const { username, password, rememberMe } = req.body;
@@ -84,8 +82,6 @@ router.post('/signin', (req, res) => {
         });
     });
 });
-//by batool
-
 router.post("/logout", (req, res) => {
     const { username } = req.body;
 
@@ -119,10 +115,6 @@ router.post("/logout", (req, res) => {
 });
 
 
-
-
-//by batool
-
 router.get("/getMsg", (req, res) => {
     const { sender, receiver } = req.query;
     const query = `
@@ -136,7 +128,6 @@ router.get("/getMsg", (req, res) => {
       res.json(results);
     });
   });
- //by batool
  
   router.post("/sendMsg", (req, res) => {
     const { sender, receiver, message } = req.body;
@@ -147,10 +138,6 @@ router.get("/getMsg", (req, res) => {
     });
   });
   
-
-
-//by batool
-
   router.get('/users-by-role', (req, res) => {
     const sql = "SELECT username, role FROM users";
     db.query(sql, (err, results) => {
@@ -169,7 +156,6 @@ router.get("/getMsg", (req, res) => {
   });
   
 
-//by batool
 
   router.get("/stayed-signedin", (req, res) => {
     const sql = "SELECT username, password FROM users WHERE staySignin = 'yes'";
@@ -183,7 +169,6 @@ router.get("/getMsg", (req, res) => {
     });
   });
 
-  // by marwaaaaaaa************
   router.post('/add-project', (req, res) => {
     const {
       title,
@@ -193,7 +178,7 @@ router.get("/getMsg", (req, res) => {
       endDate,
       status,
       adminName,
-      selectedStudents // array of usernames
+      selectedStudents
     } = req.body;
   
     const insertProjectQuery = `
@@ -207,13 +192,11 @@ router.get("/getMsg", (req, res) => {
         return res.status(500).json({ error: 'فشل في إضافة المشروع' });
       }
   
-      // بعد ما نضيف المشروع، نضيف الطلاب
       const insertStudentQuery = `
         INSERT INTO projectstudents (projectTitle, studentUsername)
         VALUES (?, ?)
       `;
   
-      // استخدم Promise.all لضمان انتهاء جميع الإدخالات
       const promises = selectedStudents.map(username => {
         return new Promise((resolve, reject) => {
           db.query(insertStudentQuery, [title, username], (err) => {
@@ -274,7 +257,7 @@ router.get("/getMsg", (req, res) => {
   });
   
   router.get('/projects/status/:status', (req, res) => {
-    const { status } = req.params; // جلب الحالة من URL
+    const { status } = req.params; 
     
     const query = 'SELECT * FROM projects WHERE status = ?';
     
@@ -282,13 +265,12 @@ router.get("/getMsg", (req, res) => {
       if (err) {
         return res.status(500).json({ error: 'حدث خطأ في قاعدة البيانات.' });
       }
-      res.json(results); // إرجاع النتائج في شكل JSON
+      res.json(results);
     });
   });
-  // GET students by project title
   router.get('/project-students/:title', (req, res) => {
     const projectTitle = req.params.title;
-    console.log("عنوان المشروع اللي واصل:", projectTitle); // للتأكد
+    console.log("عنوان المشروع اللي واصل:", projectTitle); 
   
     const query = 'SELECT * FROM projectstudents WHERE LOWER(TRIM(projectTitle)) = LOWER(TRIM(?))';
   
@@ -307,7 +289,6 @@ router.get("/getMsg", (req, res) => {
   router.get("/projects-by-student/:studentName", (req, res) => {
     const { studentName } = req.params;
   
-    // الخطوة 1: جلب عناوين المشاريع اللي الطالب مشارك فيها
     db.query(
       "SELECT projectTitle FROM projectstudents WHERE studentUsername = ?",
       [studentName],
@@ -320,10 +301,9 @@ router.get("/getMsg", (req, res) => {
         const titles = titlesRows.map((row) => row.projectTitle);
   
         if (titles.length === 0) {
-          return res.status(200).json([]); // الطالب مش مشارك بأي مشروع
+          return res.status(200).json([]); 
         }
   
-        // الخطوة 2: جلب تفاصيل المشاريع بناءً على العناوين
         db.query(
           "SELECT * FROM projects WHERE title IN (?)",
           [titles],
@@ -359,10 +339,6 @@ module.exports = router;
 
 
 
-// by lara *************************
-
-
-// (POST) add new task:
 router.post("/tasks", (req, res) => {
   const { projectTitle, taskName, taskDescription, taskAssignee, taskStatus, taskDueDate } = req.body;
 
@@ -383,7 +359,6 @@ router.post("/tasks", (req, res) => {
 
 module.exports = router;
 
-// (PUT) Edit tasks:
 router.put('/tasks/:id', (req, res) => {
   const taskId = req.params.id;
   const { projectTitle, taskName, taskDescription, taskAssignee, taskStatus, taskDueDate } = req.body;
@@ -413,7 +388,6 @@ router.put('/tasks/:id', (req, res) => {
   });
 });
 
-// (Delete) delete Tasks by id
 router.delete('/tasks/:id', (req, res) => {
   const taskId = req.params.id;
 
@@ -433,7 +407,6 @@ router.delete('/tasks/:id', (req, res) => {
   });
 });
 
-// (GET) لعرض جميع المهام
 router.get('/tasks', (req, res) => {
   const allowedSortFields = ['taskStatus', 'projectTitle', 'taskDueDate', 'taskAssignee'];
   const sortBy = allowedSortFields.includes(req.query.sortBy) ? req.query.sortBy : 'taskStatus';
@@ -451,7 +424,6 @@ router.get('/tasks', (req, res) => {
 });
 
 
-//(Get) show all  project 
 router.get('/projects', (req, res) => {
   const query = 'SELECT * FROM projects';
 
@@ -465,7 +437,6 @@ router.get('/projects', (req, res) => {
   });
 });
 
-// (GET) Tasks for specific student
 router.get("/tasks/student/:studentName", (req, res) => {
   const studentName = req.params.studentName;
 
